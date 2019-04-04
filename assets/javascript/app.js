@@ -48,8 +48,6 @@
   $("#next").on("click", function(e) {
     e.preventDefault();
 
-    
-
     // Suspend click listener during fade animation
     if (quiz.is(":animated")) {
       return false;
@@ -137,16 +135,23 @@
     selections[questionCounter] = +$('input[name="answer"]:checked').val();
   }
 
- 
-
   // counts down the timer
   function count() {
     time--;
     $("#timer").text(time + " seconds left");
+    if (time === 0) {
+      selections.push(-1);
+      questionCounter++;
+     // alert("Time's up!");
+      displayNext();
+    }
   }
   if (!clockRunning) {
     intervalId = setInterval(count, 1000);
     clockRunning = true;
+  }
+  function myStopFunction() {
+    clearInterval(intervalId);
   }
 
   // Displays next requested element
@@ -163,7 +168,7 @@
           $("input[value=" + selections[questionCounter] + "]").prop(
             "checked",
             true
-          )
+          );
         }
 
         // Controls display of 'prev' button
@@ -178,9 +183,10 @@
         quiz.append(scoreElem).fadeIn();
         $("#next").hide();
         $("#prev").hide();
+        $("#timer").hide();
+        myStopFunction();
         $("#start").show();
       }
-      
     });
   }
 
